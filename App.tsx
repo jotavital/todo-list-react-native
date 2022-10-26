@@ -1,9 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import HomeScreen from "./src/navigation/Home";
-import ProfileScreen from "./src/navigation/Profile";
+import HomeScreen from "./src/navigation/screens/Home";
+import NewTaskScreen from "./src/navigation/screens/NewTask";
+import 'expo-dev-client';
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -14,19 +13,14 @@ export default function App() {
                 <Stack.Screen
                     name="Home"
                     component={HomeScreen}
-                    options={{ title: "Welcome" }}
+                    options={{ title: "Minhas tarefas" }}
                 />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
+                <Stack.Screen
+                    name="NewTask"
+                    component={NewTaskScreen}
+                    options={{ title: "Criar tarefa" }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "red",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-});
