@@ -10,7 +10,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.container}>
             <Button
                 title="Nova tarefa"
-                onPress={() => navigation.navigate("NewTask", { name: "Jane" })}
+                onPress={() => navigation.navigate("NewTask")}
             />
         </View>
     );

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import DatePicker from "react-native-date-picker";
 
-interface Props {}
+interface Props {
+    date: Date;
+    handleSetDate: any;
+}
 
-const Datepicker: React.FC<Props> = () => {
-    const [date, setDate] = useState(new Date());
-    const handleSetDate = (value: Date) => {
-        setDate(value);
-    };
+const Datepicker: React.FC<Props> = ({date, handleSetDate}) => {
 
     return (
         <DatePicker
@@ -16,8 +16,15 @@ const Datepicker: React.FC<Props> = () => {
             date={date}
             onDateChange={handleSetDate}
             timeZoneOffsetInMinutes={0}
+            style={styles.datepicker}
         />
     );
 };
 
 export default Datepicker;
+
+const styles = StyleSheet.create({
+    datepicker: {
+        width: undefined
+    },
+});
