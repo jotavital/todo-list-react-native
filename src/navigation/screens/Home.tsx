@@ -26,9 +26,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
                     {tasks.map((task: Task) => {
                         return (
-                            <Card>
+                            <Card key={task.uuid}>
                                 <View style={styles.cardContainer}>
-                                    <View style={{ width: 250 }}>
+                                    <View style={{ width: 230 }}>
                                         <Text
                                             style={{
                                                 fontWeight: "bold",

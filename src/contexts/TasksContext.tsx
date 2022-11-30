@@ -12,15 +12,7 @@ interface TasksContextData {
 const TasksContext = createContext<TasksContextData>({} as TasksContextData);
 
 export const TasksProvider = ({ children }: any) => {
-    const [tasks, setTasks] = useState<Task[]>([
-        {
-            uuid: 12,
-            title: "legalzinn",
-            description: "topppp",
-            date: "21/07/2022",
-            isCompleted: false,
-        },
-    ]);
+    const [tasks, setTasks] = useState<Task[]>([]);
 
     const handleDeleteTask = (uuid: number) => {
         const newTasks = tasks.filter((task) => {

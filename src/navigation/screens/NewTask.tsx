@@ -94,6 +94,7 @@ const NewTaskScreen: React.FC<Props> = ({ navigation }) => {
                     value={date}
                     onChangeText={setDate}
                     mask={Masks.DATE_DDMMYYYY}
+                    keyboardType="numeric"
                 />
             </View>
             <View style={styles.buttonContainer}>
