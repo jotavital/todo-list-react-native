@@ -1,99 +1,124 @@
-import React, { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import Datepicker from "../../components/Datepicker";
+import { now } from "moment";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
+import MaskInput, { Masks } from "react-native-mask-input";
+import { useTasks } from "../../contexts/TasksContext";
+import { Task } from "../../models/Task";
+import { globalStyles } from "../../styles/globalStyles";
+import { Button } from "@rneui/base";
 
 export type Props = {
     navigation: any;
 };
 
 const NewTaskScreen: React.FC<Props> = ({ navigation }) => {
-    const [date, setDate] = useState(new Date());
-    const handleSetDate = (value: Date) => {
-        setDate(value);
-    };
+    const { tasks, setTasks } = useTasks();
     const [titleInvalid, setTitleInvalid] = useState<boolean>(false);
     const [descriptionInvalid, setDescriptionInvalid] =
         useState<boolean>(false);
+    const [dateInvalid, setDateInvalid] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const [date, setDate] = useState<string>("");
+    const [isDataValid, setIsDataValid] = useState<boolean>(false);
+    const [showErrors, setShowErrors] = useState<boolean>(false);
 
-    const handleSaveTask = () => {
-        console.log(date);
-        let validated = false;
-
-        setTitleInvalid(title === "");
-        setDescriptionInvalid(description === "");
-
-        if (title !== "" && description !== "") {
-            validated = true;
+    const validateData = () => {
+        if (showErrors) {
+            setTitleInvalid(title === "");
+            setDescriptionInvalid(description === "");
+            setDateInvalid(date?.length < 10);
         }
 
-        if (validated) {
+        setIsDataValid(
+            title !== "" && description !== "" && !(date.length < 10)
+        );
+
+        setShowErrors(true);
+    };
+
+    const handleSaveTask = () => {
+        validateData();
+
+        if (isDataValid) {
+            const newTask: Task = {
+                uuid: now(),
+                title: title,
+                description: description,
+                date: date,
+                isCompleted: false,
+            };
+
+            const newTasksArray = [newTask, ...tasks];
+
+            setTasks(newTasksArray);
             navigation.navigate("Home");
+            ToastAndroid.show("Tarefa criada", ToastAndroid.SHORT);
         }
     };
 
+    useEffect(() => {
+        validateData();
+    }, [title, description, date]);
+
     return (
-        <>
-            <Text style={styles.h1}>Crie uma tarefa</Text>
-            <TextInput
-                style={[
-                    styles.textInput,
-                    titleInvalid ? styles.invalidField : null,
-                ]}
-                onChangeText={(value) => setTitle(value)}
-                placeholder="Título"
-                keyboardType="default"
-            />
-            <TextInput
-                style={[
-                    styles.textInput,
-                    descriptionInvalid ? styles.invalidField : null,
-                ]}
-                onChangeText={(value) => setDescription(value)}
-                placeholder="Descrição"
-                keyboardType="default"
-            />
-            <View style={{ width: "100%" }}>
-                <Text style={styles.h2}>Prazo</Text>
-                <Datepicker date={date} handleSetDate={handleSetDate} />
+        <View style={globalStyles.pageWrapper}>
+            <Text style={[globalStyles.h1, globalStyles.textAlignCenter]}>
+                Crie uma tarefa
+            </Text>
+            <View style={{ marginTop: 10 }}>
+                <TextInput
+                    style={[
+                        globalStyles.textInput,
+                        titleInvalid ? globalStyles.invalidField : null,
+                    ]}
+                    onChangeText={(value) => setTitle(value)}
+                    placeholder="Título"
+                    keyboardType="default"
+                />
+                <TextInput
+                    style={[
+                        globalStyles.textInput,
+                        descriptionInvalid ? globalStyles.invalidField : null,
+                    ]}
+                    onChangeText={(value) => setDescription(value)}
+                    placeholder="Descrição"
+                    keyboardType="default"
+                />
+                <MaskInput
+                    style={[
+                        globalStyles.textInput,
+                        dateInvalid ? globalStyles.invalidField : null,
+                    ]}
+                    placeholderFillCharacter="-"
+                    value={date}
+                    onChangeText={setDate}
+                    mask={Masks.DATE_DDMMYYYY}
+                />
             </View>
-            <View style={styles.button}>
+            <View style={styles.buttonContainer}>
                 <Button
                     title="Salvar"
                     color="green"
                     onPress={() => handleSaveTask()}
+                    icon={{
+                        name: "check",
+                        type: "font-awesome",
+                        size: 15,
+                        color: "white",
+                    }}
+                    disabled={!isDataValid}
                 />
             </View>
-        </>
+        </View>
     );
 };
 
 export default NewTaskScreen;
 
 const styles = StyleSheet.create({
-    textInput: {
-        margin: 10,
-        borderColor: "#111",
-        borderBottomColor: "black",
-        borderBottomWidth: 1,
-    },
-    h1: {
-        fontSize: 30,
-        padding: 20,
-        textAlign: "center",
-    },
-    h2: {
-        fontSize: 20,
-        marginLeft: 10,
+    buttonContainer: {
         marginTop: 20,
         marginBottom: 20,
-    },
-    button: {
-        padding: 20,
-    },
-    invalidField: {
-        borderBottomColor: "red",
-        backgroundColor: "#f8ad9d",
     },
 });
